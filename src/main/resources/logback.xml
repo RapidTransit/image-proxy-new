@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Logback development configuration (console-only).
+    To use production configuration, deploy with: -Dlogback.configurationFile=logback-production.xml
+-->
+<configuration>
+  <property name="PATTERN" value="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+
+  <appender name="LogToConsole" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.out</target>
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.pss" level="INFO"/>
+  <logger name="io.vertx" level="INFO"/>
+  <logger name="io.netty" level="WARN"/>
+
+  <root level="INFO">
+    <appender-ref ref="LogToConsole"/>
+  </root>
+</configuration>

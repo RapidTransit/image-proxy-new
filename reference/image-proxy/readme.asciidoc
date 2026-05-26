@@ -1,0 +1,5 @@
+Illegal reflective access warnings when running Netty with Java 9
+06:47:22.468 [main] DEBUG io.netty.util.internal.PlatformDependent0 - direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
+https://github.com/netty/netty/issues/7817
+
+https://github.com/apache/james-project/pull/1996

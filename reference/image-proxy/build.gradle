@@ -1,0 +1,309 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
+
+plugins {
+  id("java")
+  id("application")
+  id 'jacoco'
+  id 'checkstyle'
+  id 'pmd'
+  id("io.micronaut.minimal.library")
+//  id("io.micronaut.application") version "4.2.0"
+  id("com.github.spotbugs") version "5.0.13"
+  id("com.gradleup.shadow") version "8.3.6"
+
+}
+
+
+group = "com.pss"
+version = "0.0.6"
+
+repositories {
+  mavenCentral()
+}
+checkstyle {
+  toolVersion = '10.9.3'
+}
+//def vertxVersion = "4.4.6"
+def junitJupiterVersion = "5.9.2"
+
+def mainVerticleName = "com.pss.proxy.image.ImageProxyApplication"
+//def launcherClassName = "com.pss.proxy.image.SecondaryLauncher"
+def launcherClassName = "io.vertx.core.Launcher"
+
+def watchForChange = "src/**/*"
+def doOnChange = "${projectDir}/../gradlew classes"
+
+application {
+//  mainModule = 'pss.image.proxy'
+  applicationDefaultJvmArgs += "JVM_ARGS_PLACEHOLDER"
+//  mainClass.set(launcherClassName)
+  mainClass.set(mainVerticleName)
+}
+
+// https://stackoverflow.com/questions/39230739/how-to-configure-gradle-application-plugin-to-set-my-user-dir-to-the-location-of
+// Gradle keeps adding double quotes ie: '"argshere"' for DEFAULT_JAVA_OPTS
+startScripts {
+  onlyIf { false }
+  doLast {
+    unixScript.text = unixScript.text.replace(/'"JVM_ARGS_PLACEHOLDER"'/, '"-Djava.awt.headless=true -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -Dlog4j2.configurationFile=config/log4j2.xml"')
+  }
+}
+//startShadowScripts {
+//  onlyIf {false}
+//}
+
+
+
+configurations {
+  configureEach {
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
+}
+
+dependencies {
+  compileOnly group: 'org.immutables', name: 'value', version: immutablesVersion
+  annotationProcessor group: 'org.immutables', name: 'value', version: immutablesVersion
+  implementation project(':vertx-common')
+  implementation("jakarta.annotation:jakarta.annotation-api")
+  implementation group: 'io.micronaut', name: 'micronaut-context', version: micronautVersion
+  implementation platform(group: 'org.apache.logging.log4j', name: 'log4j-bom', version: log4jVersion)
+  implementation('org.apache.logging.log4j:log4j-core')
+  implementation('org.apache.logging.log4j:log4j-api')
+  implementation('org.apache.logging.log4j:log4j-slf4j2-impl')
+  implementation('org.apache.logging.log4j:log4j-jpl')
+  implementation platform(group: 'com.fasterxml.jackson', name: 'jackson-bom', version: jacksonVersion)
+  implementation('com.fasterxml.jackson.core:jackson-databind')
+  implementation('com.fasterxml.jackson.core:jackson-annotations')
+  implementation('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+  implementation group: 'org.jctools', name: 'jctools-core', version: '4.0.3'
+  implementation group: 'org.cache2k', name: 'cache2k-core', version: cache2kVersion
+  compileOnly group: 'org.jetbrains', name: 'annotations', version: jetbrainsVersion
+  compileOnly group: 'org.checkerframework', name: 'checker-qual', version: checkerVersion
+  implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
+  implementation("io.netty:netty-transport-native-epoll::linux-x86_64")
+  implementation("io.vertx:vertx-web")
+  testImplementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
+  testImplementation("io.vertx:vertx-junit5")
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testImplementation group: 'org.yaml', name: 'snakeyaml', version: '2.5'
+  testImplementation platform(group:'org.junit', name:'junit-bom', version: junitVersion)
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation 'org.junit.jupiter:junit-jupiter-params'
+  testImplementation platform(group: 'org.mockito', name: 'mockito-bom', version: mockitoVersion)
+  testImplementation('org.mockito:mockito-core')
+  testImplementation('org.mockito:mockito-junit-jupiter')
+  testImplementation group: 'org.assertj', name: 'assertj-core', version: assertJVersion
+  testImplementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: httpClient5Version
+  testImplementation group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+  testAnnotationProcessor group: 'org.immutables', name: 'value', version: immutablesVersion
+  testAnnotationProcessor "io.micronaut:micronaut-inject-java"
+  testImplementation("io.micronaut.test:micronaut-test-junit5")
+  testImplementation(project(':vertx-test'))
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(25)
+  }
+
+}
+
+test {
+  finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+  dependsOn test // tests are required to run before generating the report
+}
+
+
+tasks.withType(ShadowJar).configureEach {
+  archiveClassifier.set('')
+  exclude 'log4j2.xml'
+  manifest {
+    attributes(["Main-Verticle": mainVerticleName])
+  }
+  mergeServiceFiles()
+}
+
+distributions {
+  shadow {
+    contents {
+      (from 'config') {
+        exclude 'application-jwt.yaml'
+        into 'config'
+      }
+      (from 'src/main/resources'){
+        include 'log4j2.xml'
+        into 'config'
+      }
+      (from 'build/distributions/java-runtime'){
+        into 'java-runtime'
+      }
+     // exclude 'bin/**'
+    }
+
+    distributionBaseName.set(base.archivesName)
+    println base.archivesName
+  }
+  main {
+    contents {
+      (from 'config') {
+        exclude 'application-jwt.yaml'
+        into 'config'
+      }
+      (from 'src/main/resources'){
+        include 'log4j2.xml'
+        into 'config'
+      }
+      exclude 'bin/**'
+    }
+  }
+}
+
+project.configurations.runtimeClasspath.setCanBeResolved(true)
+
+// Exclude log4j2.xml from resources its going in config file
+jar {
+    def names = gradle.startParameter.taskNames
+    if(names.contains('assembleDist') ||  names.contains("Dist")) {
+      processResources.exclude('*')
+    }
+  doFirst {
+    manifest {
+      attributes([
+              'Class-Path': project.configurations.runtimeClasspath.resolve().collect { it.name }.join(" "),
+              'Main-Class': mainVerticleName
+      ])
+    }
+  }
+  dependsOn ('dependencies')
+}
+
+
+tasks.withType(Test).configureEach {
+  useJUnitPlatform()
+}
+
+["skopeo", "podman"].forEach { executable ->
+  tasks.register("check${executable.capitalize()}Exists", Exec) {
+    logger.lifecycle("Checking if ${executable} is installed")
+    group = 'verification'
+    commandLine 'sh', '-c', "command -v ${executable} >/dev/null 2>&1 && echo \"${executable} is installed\" || { echo \"${executable} is not installed. Aborting.\" >&2; exit 1; }"
+
+  }
+}
+
+
+tasks.withType(JavaExec).configureEach {
+  args = ["run", mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$launcherClassName",
+          "--on-redeploy=$doOnChange", "--java-opts", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000"]
+}
+
+
+
+// --add-reads pss.image.proxy=ALL-UNNAMED
+String groupName = "jpackage"
+def copyTask = tasks.register('copyRuntime', Copy){
+  group = groupName
+  from project.configurations.runtimeClasspath.resolve()
+  into "$buildDir/libs"
+}
+
+def copyConfig = tasks.register('copyConfig', Copy){
+  group = groupName
+  from 'config'
+  into "$buildDir/distributions/image-proxy/config"
+ // dependsOn createAppImage
+}
+
+
+/**
+ * jlink fails if the output directory already exists, make sure it is deleted before
+ */
+def cleanJavaRuntime = tasks.register('cleanJavaRuntime') {
+  project.delete("${buildDirectory}/distributions/java-runtime")
+}
+
+tasks.register('podmanJlink', Exec) {
+  dependsOn tasks.named('checkPodmanExists')
+  dependsOn cleanJavaRuntime
+  commandLine "podman"
+  args = [
+          "run",
+          "--mount=type=bind,source=${buildDirectory}/distributions,target=/output",
+          "--rm",
+          "docker.io/library/eclipse-temurin:24.0.1_9-jdk-ubi9-minimal",
+          'jlink',
+          "--no-header-files",
+          "--no-man-pages",
+          "--compress=2",
+          "--strip-debug",
+          "--add-modules", "java.base,jdk.unsupported,java.xml,java.management,java.logging,java.desktop,jdk.zipfs,jdk.crypto.ec,jdk.naming.dns,java.sql,java.naming",
+          "--vm", "server",
+          "--output", "/output/java-runtime"
+  ]
+}
+
+
+tasks.register('listDeps') {
+
+  group = groupName
+
+  doLast {
+    def toolchain = project.extensions.getByType(JavaPluginExtension.class).toolchain
+    def launcher = javaToolchains.launcherFor(toolchain)
+    def javaDir = launcher.map { it.metadata.installationPath }.get()
+    def resolve = project.configurations.runtimeClasspath.resolve()
+    def classPath = resolve.each {it.absolutePath}.join(",")
+    resolve.each { f ->
+      try {
+        println "Report for: $f"
+       def result = providers.exec {
+          commandLine "${javaDir}/bin/jdeps", "--class-path", classPath, f.absolutePath
+        }
+        if(result.standardError){
+          println result.standardError.asText.get()
+        }
+        if(result.standardOutput){
+          println result.standardOutput.asText.get()
+        }
+      } catch (Throwable t) {
+        t.printStackTrace()
+      }
+    }
+
+  }
+}
+
+//jar {
+//
+//}
+micronaut {
+//  runtime("netty")
+  testRuntime("junit5")
+  version "$micronautPlatformVersion"
+
+  processing {
+    incremental(true)
+    annotations("com.pss.*")
+  }
+//  aot {
+//
+//    // Please review carefully the optimizations enabled below
+//    // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+//    optimizeServiceLoading = false
+//    convertYamlToJava = false
+//    precomputeOperations = true
+//    cacheEnvironment = true
+//    optimizeClassLoading = true
+//    deduceEnvironment = true
+//    optimizeNetty = true
+//
+//  }
+}
+
+File getBuildDirectory() {
+  layout.buildDirectory.asFile.get()
+}

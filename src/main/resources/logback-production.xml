@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Logback production configuration (rolling files with async wrappers).
+    Deploy with: -Dlogback.configurationFile=logback-production.xml
+-->
+<configuration>
+  <property name="LOG_DIR" value="${IMAGE_PROXY_LOG_LOCATION:-/var/log/image-proxy}"/>
+  <property name="PATTERN" value="%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+
+  <appender name="ApplicationRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIR}/application.log</file>
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/application-%d{MM-dd-yyyy}-%i.log.gz</fileNamePattern>
+      <maxFileSize>5 MB</maxFileSize>
+      <maxHistory>20</maxHistory>
+      <totalSizeCap>100 MB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <appender name="RequestRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIR}/request.log</file>
+    <encoder>
+      <pattern>${PATTERN}</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_DIR}/request-%d{MM-dd-yyyy}-%i.log.gz</fileNamePattern>
+      <maxFileSize>5 MB</maxFileSize>
+      <maxHistory>20</maxHistory>
+      <totalSizeCap>100 MB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <appender name="AsyncApplicationRollingFile" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>512</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>false</neverBlock>
+    <appender-ref ref="ApplicationRollingFile"/>
+  </appender>
+
+  <appender name="AsyncRequestRollingFile" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>512</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>false</neverBlock>
+    <appender-ref ref="RequestRollingFile"/>
+  </appender>
+
+  <logger name="com.pss.image.proxy.routes.ValidImageHandler" level="DEBUG" additivity="false">
+    <appender-ref ref="AsyncRequestRollingFile"/>
+  </logger>
+
+  <logger name="com.pss" level="DEBUG" additivity="false">
+    <appender-ref ref="AsyncApplicationRollingFile"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="AsyncApplicationRollingFile"/>
+  </root>
+</configuration>

@@ -1,0 +1,8 @@
+vertx.default:
+  instance:
+    preferNativeTransport: true
+    tcpFastOpen: true
+    tcpQuickAck: true
+  server:
+    port: 8080
+    host: localhost

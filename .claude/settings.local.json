@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "WebSearch",
+      "WebFetch(domain:search.maven.org)",
+      "WebFetch(domain:repo1.maven.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:central.sonatype.com)",
+      "WebFetch(domain:plugins.gradle.org)"
+    ],
+    "deny": [
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(nc *)",
+      "Bash(ncat *)",
+      "Bash(netcat *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "Bash(sftp *)",
+      "Bash(rsync *)",
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git clone *)",
+      "Bash(gh *)",
+      "Bash(npm install *)",
+      "Bash(npm i *)",
+      "Bash(npm update *)",
+      "Bash(npm publish *)",
+      "Bash(yarn install *)",
+      "Bash(yarn add *)",
+      "Bash(yarn upgrade *)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm i *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm update *)",
+      "Bash(pip install *)",
+      "Bash(pip3 install *)",
+      "Bash(pipx install *)",
+      "Bash(uv pip install *)",
+      "Bash(uv add *)",
+      "Bash(./bun.sh add *)",
+      "Bash(./bun.sh install *)",
+      "Bash(./bun.sh i *)",
+      "Bash(./bun.sh upgrade *)",
+      "Bash(bun add *)",
+      "Bash(bun install *)",
+      "Bash(bun i *)",
+      "Bash(bun upgrade *)"
+    ]
+  }
+}

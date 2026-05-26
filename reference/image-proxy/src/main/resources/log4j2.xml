@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+
+    <Properties>
+        <Property name="log4j2.disableJmx">true</Property>
+        <Property name="log4j2.disable.jmx">true</Property>
+        <Property name="log4j2.enableJndiLookup">false</Property>
+        <Property name="filename">${env:IMAGE_PROXY_LOG_LOCATION:-/var/log/image-proxy}</Property>
+
+    </Properties>
+
+    <Select>
+        <SystemPropertyArbiter propertyName="log.environment" propertyValue="production">
+            <Appenders>
+                <RollingFile name="GenericRollingFile" fileName="${filename}/application.log" filePattern="logs/application-%d{MM-dd-yyyy}-%i.log.gz">
+                    <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                    <Policies>
+                        <SizeBasedTriggeringPolicy size="5 MB"/>
+                    </Policies>
+                    <DefaultRolloverStrategy max="20"/>
+                </RollingFile>
+                <RollingFile name="RequestRollingFile" filename="${filename}/request.log" filePattern="logs/request-%d{MM-dd-yyyy}-%i.log.gz">
+                    <PatternLayout pattern="%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                    <Policies>
+                        <SizeBasedTriggeringPolicy size="5 MB"/>
+                    </Policies>
+                    <DefaultRolloverStrategy max="20"/>
+                </RollingFile>
+                <Async name="AsyncRequestRollingFile">
+                    <AppenderRef ref="RequestRollingFile" />
+                    <JCToolsBlockingQueue />
+                </Async>
+                <Async name="AsyncGenericRollingFile">
+                    <AppenderRef ref="GenericRollingFile" />
+                    <JCToolsBlockingQueue />
+                </Async>
+            </Appenders>
+            <Loggers>
+                <Logger name="com.pss.proxy.image.routes.ValidImageHandler" level="debug" additivity="false">
+                    <AppenderRef ref="AsyncRequestRollingFile"/>
+                </Logger>
+                <Logger name="com.pss" level="debug" additivity="false">
+                    <AppenderRef ref="AsyncGenericRollingFile"/>
+                </Logger>
+                <Root level="info">
+                    <AppenderRef ref="AsyncGenericRollingFile"/>
+                </Root>
+            </Loggers>
+        </SystemPropertyArbiter>
+        <DefaultArbiter>
+            <Appenders>
+                <Console name="LogToConsole" target="SYSTEM_OUT">
+                    <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                </Console>
+            </Appenders>
+            <Loggers>
+                <Logger name="com.pss" level="debug" additivity="false">
+                    <AppenderRef ref="LogToConsole"/>
+                </Logger>
+                <Logger name="io.micronaut" level="trace" additivity="false">
+                    <AppenderRef ref="LogToConsole"/>
+                </Logger>
+                <Logger name="io.netty" level="debug" additivity="false">
+                    <AppenderRef ref="LogToConsole"/>
+                </Logger>
+                <Logger name="io.netty.handler.logging.LoggingHandler" level="debug" additivity="false">
+                    <AppenderRef ref="LogToConsole"/>
+                </Logger>
+                <Root level="info">
+                    <AppenderRef ref="LogToConsole"/>
+                </Root>
+            </Loggers>
+        </DefaultArbiter>
+    </Select>
+</Configuration>

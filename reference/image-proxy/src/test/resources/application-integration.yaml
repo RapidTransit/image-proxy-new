@@ -1,0 +1,10 @@
+vertx:
+  server:
+    port: 9091
+  client:
+    # can not start with http/https etc, needs to be a domain ONLY
+    defaultHost: "localhost"
+    ssl: false
+    defaultPort: 9090
+#  protocolVersion: HTTP_2
+  #useAlpn: true

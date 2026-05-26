@@ -1,0 +1,61 @@
+plugins {
+    id 'java-library'
+    id("io.micronaut.minimal.library")
+    id("org.asciidoctor.jvm.convert") version "4.0.5"
+//    id("io.micronaut.aot") version "4.5.3"
+}
+
+group = 'com.pss'
+version = '0.0.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    implementation group: 'io.micronaut', name: 'micronaut-context', version: micronautVersion
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion
+    implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
+    implementation("io.vertx:vertx-web")
+    implementation platform(group: 'org.apache.logging.log4j', name: 'log4j-bom', version: log4jVersion)
+    implementation('org.apache.logging.log4j:log4j-core')
+    implementation('org.apache.logging.log4j:log4j-api')
+    implementation('org.apache.logging.log4j:log4j-slf4j2-impl')
+    implementation('org.apache.logging.log4j:log4j-jpl')
+    compileOnly group: 'org.jetbrains', name: 'annotations', version: jetbrainsVersion
+    compileOnly group: 'org.checkerframework', name: 'checker-qual', version: checkerVersion
+//    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+    testImplementation("io.vertx:vertx-junit5")
+    testImplementation platform(group:'org.junit', name:'junit-bom', version: junitVersion)
+    testImplementation("org.junit.jupiter:junit-jupiter:")
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation platform(group: 'org.mockito', name: 'mockito-bom', version: mockitoVersion)
+    testImplementation('org.mockito:mockito-core')
+    testImplementation('org.mockito:mockito-junit-jupiter')
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: assertJVersion
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    version "$micronautPlatformVersion"
+    processing {
+        incremental(true)
+        annotations("com.pss.*")
+    }
+
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+
+}

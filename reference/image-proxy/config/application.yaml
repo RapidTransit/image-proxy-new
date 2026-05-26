@@ -1,0 +1,67 @@
+#https://github.com/micronaut-projects/micronaut-core/issues/10004
+#micronaut.http.client.alpn-modes: http/1.1
+vertx:
+  instance:
+    preferNativeTransport: true
+    tcpFastOpen: true
+    tcpQuickAck: true
+    disableDnsResolver: true
+  server:
+    port: 8081
+    host: localhost
+  client:
+    # can not start with http/https etc, needs to be a domain ONLY
+    defaultHost: "pleasant-smoke.sirv.com"
+    ssl: true
+    defaultPort: 443
+    protocolVersion: HTTP_2
+    useAlpn: true
+micronaut.http.client:
+  shutdownTimeout: 1000ms
+client:
+  host: "https://pleasant-smoke.sirv.com"
+proxy:
+  multi-try-delay: 10
+  default-profile: "p"
+  query-param: "tr"
+  no-image: "/images/no-image.png"
+  protected-test-image: "/p/test-image.png"
+  test-jwt: false
+  secure-mappings:
+    p: "p"
+    p-m_m: "ps-m_m"
+    p-m_l: "ps-m_l"
+    p-l: "ps-l"
+    p-l_m: "ps-l_m"
+    p-l_l: "ps-l_l"
+    p-t: "p-t"
+    p-t_m: "p-t_m"
+    p-t_l: "p-t_l"
+  shim-mappings:
+    n-primary: "p"
+    n-primary_large: "p-m_m"
+    n-primary_l: "p-m_m"
+    n-primary_xl: "p-l"
+    n-large: "p-l"
+    n-primary_xxl: "p-l_m"
+    n-large_xl: "p-l_m"
+    n-thumbnail: "p-t"
+    n-thumbnail_large: "p-t"
+    n-primary_t_sm: "p-t"
+    n-primary_t_md: "p-t_m"
+    n-primary_t_lg: "p-t_l"
+    ## new shims
+    n-primary-m_m: "p-m_m"
+    n-primary-m_l: "p-m_l"
+    n-large-l_m: "p-l_m"
+    n-large-l_l: "p-l_l"
+  accepted-profiles:
+    - p
+    - p-m_m
+    - p-m_l
+    - p-l
+    - p-l_m
+    - p-l_l
+    - p-t
+    - p-t_m
+    - p-t_l

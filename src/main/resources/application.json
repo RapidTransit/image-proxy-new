@@ -1,0 +1,75 @@
+{
+  "proxy": {
+    "multi-try-delay": 10,
+    "default-profile": "p",
+    "query-param": "tr",
+    "no-image": "/images/no-image.png",
+    "protected-test-image": "/p/test-image.png",
+    "test-jwt": false,
+    "secure-mappings": {
+      "p": "p",
+      "p-m_m": "ps-m_m",
+      "p-m_l": "ps-m_l",
+      "p-l": "ps-l",
+      "p-l_m": "ps-l_m",
+      "p-l_l": "ps-l_l",
+      "p-t": "p-t",
+      "p-t_m": "p-t_m",
+      "p-t_l": "p-t_l"
+    },
+    "shim-mappings": {
+      "n-primary": "p",
+      "n-primary_large": "p-m_m",
+      "n-primary_l": "p-m_m",
+      "n-primary_xl": "p-l",
+      "n-large": "p-l",
+      "n-primary_xxl": "p-l_m",
+      "n-large_xl": "p-l_m",
+      "n-thumbnail": "p-t",
+      "n-thumbnail_large": "p-t",
+      "n-primary_t_sm": "p-t",
+      "n-primary_t_md": "p-t_m",
+      "n-primary_t_lg": "p-t_l",
+      "n-primary-m_m": "p-m_m",
+      "n-primary-m_l": "p-m_l",
+      "n-large-l_m": "p-l_m",
+      "n-large-l_l": "p-l_l"
+    },
+    "accepted-profiles": [
+      "p", "p-m_m", "p-m_l", "p-l", "p-l_m", "p-l_l", "p-t", "p-t_m", "p-t_l"
+    ],
+    "jwt-mappings": {
+      "p":     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjI1MCwidGh1bWJuYWlsIjoyNTAsInByb2ZpbGUiOiJwIn0sImlhdCI6MTc2OTAwOTA3MiwiZXhwIjoxNzg0NTYxMDcyLCJhdWQiOiIvcC8ifQ.fo-jxrcDdfKArl4QmRxkBw5vZlhYZcfAEAUbTDPJXO0",
+      "p-m_m": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjUwMCwidGh1bWJuYWlsIjo1MDAsInByb2ZpbGUiOiJwcy1tX20ifSwiaWF0IjoxNzY5MDA5MDczLCJleHAiOjE3ODQ1NjEwNzMsImF1ZCI6Ii9wLyJ9.B05EYaQmeXbuzEgMzEadhC80HNigjGqohMMfndlbZZ8",
+      "p-m_l": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjc1MCwidGh1bWJuYWlsIjo3NTAsInByb2ZpbGUiOiJwcy1tX2wifSwiaWF0IjoxNzY5MDA5MDczLCJleHAiOjE3ODQ1NjEwNzMsImF1ZCI6Ii9wLyJ9.OwXtuHLaww8k9b8jrI9izcYYypjllJPDsSu2YeEahY8",
+      "p-l":   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjEwMDAsInRodW1ibmFpbCI6MTAwMCwicHJvZmlsZSI6InBzLWwifSwiaWF0IjoxNzY5MDA5MDc0LCJleHAiOjE3ODQ1NjEwNzQsImF1ZCI6Ii9wLyJ9.On9fGm1izSI3LLjSfk95lrPWmTonXFs9p42vJuUfcS4",
+      "p-l_m": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjIwMDAsInRodW1ibmFpbCI6MjAwMCwicHJvZmlsZSI6InBzLWxfbSJ9LCJpYXQiOjE3NjkwMDkwNzQsImV4cCI6MTc4NDU2MTA3NCwiYXVkIjoiL3AvIn0.n_tpzh1F8frpCWKjPmYuXcG4vX6Zp-kSKi-noZfTHT0",
+      "p-l_l": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjMwMDAsInRodW1ibmFpbCI6MzAwMCwicHJvZmlsZSI6InBzLWxfbCJ9LCJpYXQiOjE3NjkwMDkwNzQsImV4cCI6MTc4NDU2MTA3NCwiYXVkIjoiL3AvIn0.te1XNrarEpJxZOAQfGnfd94RE2tO23hpcyWj6eRj5bM",
+      "p-t":   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjUwLCJ0aHVtYm5haWwiOjUwLCJwcm9maWxlIjoicC10In0sImlhdCI6MTc2OTAwOTA3NSwiZXhwIjoxNzg0NTYxMDc1LCJhdWQiOiIvcC8ifQ.pEX8CAB9UFTYyAiOuy0bGYgCnm1_8PzfqH6MvZNqJE0",
+      "p-t_m": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjEwMCwidGh1bWJuYWlsIjoxMDAsInByb2ZpbGUiOiJwLXRfbSJ9LCJpYXQiOjE3NjkwMDkwNzUsImV4cCI6MTc4NDU2MTA3NSwiYXVkIjoiL3AvIn0.f8dG9y7J8YfC9gNtCiZt_YOBIzru5TugR-qgZ0amoj4",
+      "p-t_l": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcmdzIjp7InciOjE1MCwidGh1bWJuYWlsIjoxNTAsInByb2ZpbGUiOiJwLXRfbCJ9LCJpYXQiOjE3NjkwMDkwNzYsImV4cCI6MTc4NDU2MTA3NiwiYXVkIjoiL3AvIn0.Ldo-qhAe1EMHmqHCVm6ZRX6x10Sbs-u9TXy3b0-wQG0"
+    }
+  },
+  "vertx": {
+    "instance": {
+      "preferNativeTransport": true,
+      "disableDnsResolver": true
+    },
+    "server": {
+      "port": 8081,
+      "host": "localhost",
+      "tcpFastOpen": true,
+      "tcpQuickAck": true
+    },
+    "client": {
+      "defaultHost": "pleasant-smoke.sirv.com",
+      "ssl": true,
+      "defaultPort": 443,
+      "protocolVersion": "HTTP_2",
+      "useAlpn": true
+    }
+  },
+  "client": {
+    "host": "https://pleasant-smoke.sirv.com"
+  }
+}
