@@ -32,7 +32,7 @@ File: `src/main/java/com/pss/image/proxy/routes/QueryRouteHandler.java`.
    private static final Marker UNSUPPORTED_MEDIA = MarkerFactory.getMarker("415_UNSUPPORTED_MEDIA");
    ```
 
-2. Insert a new branch in `handleResponse` between the existing 403 and 404 branches (currently lines 60-70):
+2. Insert a new branch in `handleResponse` between the existing 404 branch and the generic `else` (currently lines 60-70). Ordering rationale: 415 is a more specific upstream rejection signal than the generic-error catch-all, but it's not strictly more specific than 404 (asset missing) — placing it right before the generic `else` keeps the existing 403/404 paths untouched and makes the dispatch read in increasing-genericity order:
 
    ```java
    } else if (clientResponse.statusCode() == 415) {
