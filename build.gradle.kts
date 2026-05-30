@@ -30,6 +30,7 @@ dependencies {
     testImplementation(libs.vertx.junit5)
     testImplementation(libs.mockito.junit)
     testImplementation(libs.assertj)
+    testImplementation(libs.logback.classic)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
