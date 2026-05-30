@@ -1,5 +1,7 @@
 package com.pss.image.proxy.routes;
 
+import static com.pss.image.proxy.util.Util.buildUri;
+
 import com.pss.image.proxy.service.ClientFailureHandler;
 import com.pss.image.proxy.service.routes.RouteService;
 import com.pss.image.proxy.util.Util;
@@ -17,12 +19,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import static com.pss.image.proxy.util.Util.buildUri;
-
 public final class QueryRouteHandler extends AbstractHandler {
 
     private static final Logger log = LoggerFactory.getLogger(QueryRouteHandler.class);
     private static final Marker NOT_FOUND = MarkerFactory.getMarker("404_NOT_FOUND");
+    private static final Marker UNSUPPORTED_MEDIA = MarkerFactory.getMarker("415_UNSUPPORTED_MEDIA");
 
     private final HttpClient client;
     private final RouteService routeService;
@@ -61,6 +62,8 @@ public final class QueryRouteHandler extends AbstractHandler {
                 log.error("JWT token expired: {}, status: {}", path, clientResponse.statusCode());
             } else if (clientResponse.statusCode() == 404) {
                 log.error(NOT_FOUND, "Image not found: {}", path);
+            } else if (clientResponse.statusCode() == 415) {
+                log.error(UNSUPPORTED_MEDIA, "Image rejected as unsupported (likely oversized): {}", path);
             } else {
                 log.error(
                         "Error encountered: {}, status: {}, message: {}",
