@@ -1,8 +1,6 @@
 package com.pss.image.proxy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import com.pss.image.proxy.config.AppConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -11,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /// Process entry point.
 ///
@@ -27,7 +27,7 @@ public final class Main {
     private Main() {}
 
     public static void main(String[] args) throws Exception {
-        var mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+        var mapper = JsonMapper.builder().build();
         var cfg = loadConfig(mapper);
         var vertxOptions = new VertxOptions(new JsonObject(cfg.vertx().instance()));
         var vertx = Vertx.vertx(vertxOptions);

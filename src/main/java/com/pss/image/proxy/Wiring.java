@@ -1,6 +1,5 @@
 package com.pss.image.proxy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pss.image.proxy.config.AppConfig;
 import com.pss.image.proxy.config.ProxyConfig;
 import com.pss.image.proxy.routes.AbstractHandler;
@@ -25,6 +24,8 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
+import tools.jackson.databind.ObjectMapper;
+
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map;

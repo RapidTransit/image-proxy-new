@@ -2,9 +2,7 @@ package com.pss.image.proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import com.pss.image.proxy.config.AppConfig;
 import com.pss.image.proxy.config.ProxyConfig;
 import io.vertx.core.Vertx;
@@ -22,6 +20,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /// End-to-end test exercising the full route table against a stub upstream.
 ///
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class EndToEndTest {
 
     private static final ObjectMapper MAPPER =
-            JsonMapper.builder().addModule(new JavaTimeModule()).build();
+            JsonMapper.builder().build();
 
     private Vertx vertx;
     private HttpServer upstream;

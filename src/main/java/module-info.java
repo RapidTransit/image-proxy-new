@@ -12,16 +12,14 @@ module pss.image.proxy {
     requires io.vertx.core;
     requires io.vertx.web;
     requires io.vertx.web.client;
-    requires com.fasterxml.jackson.databind;
-    requires com.fasterxml.jackson.annotation;
-    requires com.fasterxml.jackson.datatype.jsr310;
+    requires tools.jackson.databind;
     requires org.slf4j;
     requires java.naming;
     requires jdk.unsupported;
 
     /// Jackson reads record components reflectively.
     opens com.pss.image.proxy.config to
-            com.fasterxml.jackson.databind;
+            tools.jackson.databind;
     opens com.pss.image.proxy.data to
-            com.fasterxml.jackson.databind;
+            tools.jackson.databind;
 }

@@ -1,6 +1,6 @@
 package com.pss.image.proxy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.pss.image.proxy.config.AppConfig;
 import io.vertx.core.Future;
 import io.vertx.core.VerticleBase;
@@ -8,6 +8,7 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 /// Main verticle.
 ///

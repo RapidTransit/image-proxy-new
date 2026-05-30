@@ -13,7 +13,7 @@ version = "1.0.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
-
+val mockitoAgent = configurations.create("mockitoAgent")
 dependencies {
     implementation(platform(libs.vertx.bom))
     implementation(libs.vertx.web)
@@ -21,7 +21,7 @@ dependencies {
     runtimeOnly(variantOf(libs.netty.epoll) { classifier("linux-x86_64") })
 
     implementation(libs.jackson.databind)
-    implementation(libs.jackson.jsr310)
+    //implementation(libs.jackson.jsr310)
 
     implementation(libs.slf4j.api)
     runtimeOnly(libs.logback.classic)
@@ -31,6 +31,7 @@ dependencies {
     testImplementation(libs.mockito.junit)
     testImplementation(libs.assertj)
     testImplementation(libs.logback.classic)
+    mockitoAgent(libs.mockito) { isTransitive = false }
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
@@ -51,8 +52,9 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 tasks.withType<Test>().configureEach {
+   // jvmArgs.add("-javaagent:${mockitoAgent.asPath}")
     useJUnitPlatform()
-    jvmArgs("--enable-preview")
+    jvmArgs("--enable-preview", "-javaagent:${mockitoAgent.asPath}")
     testLogging {
         events("passed", "skipped", "failed")
     }
@@ -119,6 +121,7 @@ jacoco {
 
 tasks.named<Test>("test") {
     finalizedBy(tasks.named("jacocoTestReport"))
+
 }
 
 tasks.named<JacocoReport>("jacocoTestReport") {
@@ -127,6 +130,11 @@ tasks.named<JacocoReport>("jacocoTestReport") {
         html.required.set(true)
         xml.required.set(true)
     }
+}
+
+dependencies {
+    testImplementation(libs.mockito)
+
 }
 
 pitest {

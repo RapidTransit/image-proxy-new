@@ -2,14 +2,14 @@ package com.pss.image.proxy.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import com.pss.image.proxy.data.JwtArgs;
 import com.pss.image.proxy.data.JwtPayload;
 import com.pss.image.proxy.data.JwtToken;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 public class JwtDecoderTest {
 
@@ -17,7 +17,7 @@ public class JwtDecoderTest {
 
     @BeforeAll
     public static void setUp() {
-        var mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+        var mapper = JsonMapper.builder().build();
         decoder = new JwtDecoder(mapper);
     }
 

@@ -2,14 +2,13 @@ package com.pss.image.proxy.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 class AppConfigTest {
 
-    private final JsonMapper mapper =
-            JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private final JsonMapper mapper = JsonMapper.builder().build();
 
     @Test
     void deserializesBundledApplicationJson() throws Exception {

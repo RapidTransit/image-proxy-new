@@ -1,8 +1,10 @@
 package com.pss.image.proxy.config;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import com.pss.image.proxy.util.Verify;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
+
 import java.util.Map;
 import java.util.Set;
 
