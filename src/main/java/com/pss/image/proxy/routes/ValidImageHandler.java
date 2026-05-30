@@ -4,17 +4,17 @@ import com.pss.image.proxy.util.Util;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class ValidImageHandler extends AbstractHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ValidImageHandler.class);
 
     @Override
-    protected void handleInternal(RoutingContext event, HttpServerRequest request, HttpServerResponse response, String path) {
+    protected void handleInternal(
+            RoutingContext event, HttpServerRequest request, HttpServerResponse response, String path) {
         if (Util.isImage(path)) {
             event.next();
         } else {
@@ -32,7 +32,13 @@ public class ValidImageHandler extends AbstractHandler {
                     sb.append("\n    ").append(header.getKey()).append(": ").append(header.getValue());
                 }
             }
-            log.debug("Incoming request: Route: {}, IP: {}, Path: {} Params: {} Headers: {}", route, ip, request.path(), request.params(), sb);
+            log.debug(
+                    "Incoming request: Route: {}, IP: {}, Path: {} Params: {} Headers: {}",
+                    route,
+                    ip,
+                    request.path(),
+                    request.params(),
+                    sb);
         }
     }
 }

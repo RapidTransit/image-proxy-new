@@ -17,9 +17,8 @@ public class DynamicRouteServiceTest {
         var request = mock(HttpServerRequest.class);
         var response = mock(HttpServerResponse.class);
 
-        var requestParams = MultiMap.caseInsensitiveMultiMap()
-                .add("key1", "value1")
-                .add("key2", "value2");
+        var requestParams =
+                MultiMap.caseInsensitiveMultiMap().add("key1", "value1").add("key2", "value2");
         when(request.params()).thenReturn(requestParams);
 
         var httpRequest = MultiMap.caseInsensitiveMultiMap();

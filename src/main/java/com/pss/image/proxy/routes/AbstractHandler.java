@@ -12,6 +12,6 @@ public abstract class AbstractHandler implements Handler<RoutingContext> {
         handleInternal(event, event.request(), event.response(), event.normalizedPath());
     }
 
-    protected abstract void handleInternal(RoutingContext event, HttpServerRequest request,
-                                                   HttpServerResponse response, String path);
+    protected abstract void handleInternal(
+            RoutingContext event, HttpServerRequest request, HttpServerResponse response, String path);
 }

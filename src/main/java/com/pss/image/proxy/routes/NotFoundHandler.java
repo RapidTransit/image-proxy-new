@@ -1,5 +1,8 @@
 package com.pss.image.proxy.routes;
 
+import static com.pss.image.proxy.util.Util.ACCEPT;
+import static com.pss.image.proxy.util.Util.buildUriProfile;
+
 import com.pss.image.proxy.service.CacheHeaderManipulator;
 import com.pss.image.proxy.service.ClientFailureHandler;
 import com.pss.image.proxy.service.QueryParamService;
@@ -10,16 +13,12 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.http.RequestOptions;
 import io.vertx.ext.web.RoutingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.pss.image.proxy.util.Util.ACCEPT;
-import static com.pss.image.proxy.util.Util.buildUriProfile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /// Fetches and serves the no-image fallback when no upstream image was found.
 ///
@@ -84,7 +83,8 @@ public final class NotFoundHandler extends AbstractHandler {
         log.debug("uri: {}", uri);
         options.setURI(uri);
 
-        httpClient.request(options)
+        httpClient
+                .request(options)
                 .compose(HttpClientRequest::send)
                 .onFailure(clientFailureHandler.handle(false, event, serverResponse))
                 .onSuccess(result -> {

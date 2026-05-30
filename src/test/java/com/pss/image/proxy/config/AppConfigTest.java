@@ -14,7 +14,9 @@ class AppConfigTest {
     @Test
     void deserializesBundledApplicationJson() throws Exception {
         try (var in = AppConfigTest.class.getResourceAsStream("/application.json")) {
-            assertThat(in).as("bundled application.json must be on the test classpath").isNotNull();
+            assertThat(in)
+                    .as("bundled application.json must be on the test classpath")
+                    .isNotNull();
             var cfg = mapper.readValue(in, AppConfig.class);
 
             assertThat(cfg.proxy()).isNotNull();

@@ -6,7 +6,5 @@ import io.vertx.core.http.HttpServerResponse;
 
 public sealed interface RouteService permits DynamicRouteService, JwtRouteService, UnprotectedRouteService {
 
-    void prepareRequest(MultiMap httpRequest, HttpServerRequest request,
-                        HttpServerResponse response, String path);
-
+    void prepareRequest(MultiMap httpRequest, HttpServerRequest request, HttpServerResponse response, String path);
 }

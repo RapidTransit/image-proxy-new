@@ -25,7 +25,6 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
-
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map;
@@ -82,7 +81,8 @@ public final class Wiring {
         this.jwtTokenChecker = new JwtTokenChecker(new JwtDecoder(mapper), sirvClient, proxy);
 
         Router r = Router.router(vertx);
-        r.get().setName("check-invalid-or-missing-image")
+        r.get()
+                .setName("check-invalid-or-missing-image")
                 .failureHandler(errorHandler)
                 .handler(validImage)
                 .handler(cachingNotFound);
@@ -93,7 +93,8 @@ public final class Wiring {
         r.get("/d/*").setName("dynamic-route").handler(dynamicRoute);
         r.get("/images/no-image.png").setName("store-no-image-route").handler(noImage);
         r.get("/shared/*").setName("shared-no-image-route").handler(noImage);
-        r.get().setName("store-not-found-image-route")
+        r.get()
+                .setName("store-not-found-image-route")
                 .handler(notFound)
                 .handler(endHandler)
                 .failureHandler(errorHandler);

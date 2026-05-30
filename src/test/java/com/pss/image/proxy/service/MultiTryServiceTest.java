@@ -11,13 +11,12 @@ import static org.mockito.Mockito.when;
 
 import com.pss.image.proxy.MutableClock;
 import io.vertx.core.http.HttpServerResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MultiTryServiceTest {
 
@@ -72,7 +71,8 @@ public class MultiTryServiceTest {
     void setHeadersFormatsExpires() {
         service.setHeaders(response);
         verify(response).putHeader("cache-control", "max-age=10");
-        verify(response).putHeader(org.mockito.ArgumentMatchers.eq("expires"), org.mockito.ArgumentMatchers.contains("2026"));
+        verify(response)
+                .putHeader(org.mockito.ArgumentMatchers.eq("expires"), org.mockito.ArgumentMatchers.contains("2026"));
     }
 
     @Test

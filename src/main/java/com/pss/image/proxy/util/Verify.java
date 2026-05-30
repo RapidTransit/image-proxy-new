@@ -1,8 +1,7 @@
 package com.pss.image.proxy.util;
 
 public final class Verify {
-    private Verify() {
-    }
+    private Verify() {}
 
     public static void isTrue(boolean check, String message) {
         if (!check) {

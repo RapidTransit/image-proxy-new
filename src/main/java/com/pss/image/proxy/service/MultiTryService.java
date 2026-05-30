@@ -2,7 +2,6 @@ package com.pss.image.proxy.service;
 
 import com.pss.image.proxy.util.Verify;
 import io.vertx.core.http.HttpServerResponse;
-
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,8 +22,7 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 /// which the verticle schedules periodically.
 public final class MultiTryService implements CacheHeaderManipulator {
 
-    public static final DateTimeFormatter RFC_5322_DATE_TIME =
-            DateTimeFormatter.ofPattern("EEE, dd LLL yyyy HH:mm:ss");
+    public static final DateTimeFormatter RFC_5322_DATE_TIME = DateTimeFormatter.ofPattern("EEE, dd LLL yyyy HH:mm:ss");
 
     private static final AtomicIntegerFieldUpdater<CounterValue> UPDATER_COUNTER =
             AtomicIntegerFieldUpdater.newUpdater(CounterValue.class, "counter");

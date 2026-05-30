@@ -5,7 +5,6 @@ import com.pss.image.proxy.data.JwtHeader;
 import com.pss.image.proxy.data.JwtPayload;
 import com.pss.image.proxy.data.JwtToken;
 import com.pss.image.proxy.util.Verify;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 

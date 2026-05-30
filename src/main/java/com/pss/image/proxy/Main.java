@@ -7,11 +7,10 @@ import com.pss.image.proxy.config.AppConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /// Process entry point.
 ///
@@ -32,12 +31,13 @@ public final class Main {
         var cfg = loadConfig(mapper);
         var vertxOptions = new VertxOptions(new JsonObject(cfg.vertx().instance()));
         var vertx = Vertx.vertx(vertxOptions);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> vertx.close().toCompletionStage().toCompletableFuture().join()));
-        vertx.deployVerticle(new MainVerticle(cfg, mapper))
-                .onFailure(t -> {
-                    log.error("Verticle deployment failed", t);
-                    vertx.close();
-                });
+        Runtime.getRuntime()
+                .addShutdownHook(new Thread(() ->
+                        vertx.close().toCompletionStage().toCompletableFuture().join()));
+        vertx.deployVerticle(new MainVerticle(cfg, mapper)).onFailure(t -> {
+            log.error("Verticle deployment failed", t);
+            vertx.close();
+        });
     }
 
     private static AppConfig loadConfig(ObjectMapper mapper) throws Exception {

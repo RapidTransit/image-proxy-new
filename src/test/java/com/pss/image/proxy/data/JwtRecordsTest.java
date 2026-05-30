@@ -2,9 +2,8 @@ package com.pss.image.proxy.data;
 
 import static org.assertj.core.api.Assertions.*;
 
-import org.junit.jupiter.api.Test;
-
 import java.time.Instant;
+import org.junit.jupiter.api.Test;
 
 public class JwtRecordsTest {
 

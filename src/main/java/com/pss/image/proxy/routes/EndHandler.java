@@ -11,8 +11,8 @@ public class EndHandler extends AbstractHandler {
     private static final Logger log = LoggerFactory.getLogger(EndHandler.class);
 
     @Override
-    protected void handleInternal(RoutingContext event, HttpServerRequest request,
-                                  HttpServerResponse response, String path) {
+    protected void handleInternal(
+            RoutingContext event, HttpServerRequest request, HttpServerResponse response, String path) {
         if (!response.ended()) {
             log.warn("Response did not end");
             response.end();

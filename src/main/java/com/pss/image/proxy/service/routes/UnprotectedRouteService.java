@@ -14,9 +14,9 @@ public final class UnprotectedRouteService implements RouteService {
     }
 
     @Override
-    public void prepareRequest(MultiMap httpRequest, HttpServerRequest request, HttpServerResponse response, String path) {
+    public void prepareRequest(
+            MultiMap httpRequest, HttpServerRequest request, HttpServerResponse response, String path) {
         String param = queryParamService.extractQueryParam(request, path);
         httpRequest.add("profile", param);
     }
-
 }

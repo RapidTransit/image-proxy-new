@@ -17,10 +17,10 @@ public final class JwtRouteService implements RouteService {
     }
 
     @Override
-    public void prepareRequest(MultiMap httpRequest, HttpServerRequest request, HttpServerResponse response, String path) {
+    public void prepareRequest(
+            MultiMap httpRequest, HttpServerRequest request, HttpServerResponse response, String path) {
         String param = queryParamService.extractQueryParam(request, path);
         String jwt = proxyConfig.jwtMappings().getOrDefault(param, proxyConfig.defaultProfile());
         httpRequest.add("jwt", jwt);
     }
-
 }

@@ -3,7 +3,6 @@ package com.pss.image.proxy.routes;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
-
 import java.time.Clock;
 import java.util.Map;
 

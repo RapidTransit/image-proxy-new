@@ -10,10 +10,7 @@ import java.util.Map;
 /// independent of Vert.x's internal JSON type.
 public record AppConfig(ProxyConfig proxy, VertxBlock vertx, ClientBlock client) {
 
-    public record VertxBlock(
-            Map<String, Object> instance,
-            Map<String, Object> server,
-            Map<String, Object> client) {}
+    public record VertxBlock(Map<String, Object> instance, Map<String, Object> server, Map<String, Object> client) {}
 
     public record ClientBlock(String host) {}
 }

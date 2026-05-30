@@ -6,7 +6,6 @@ import io.vertx.core.Future;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.RequestOptions;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -42,19 +41,22 @@ public final class JwtTokenChecker {
             var key = entry.getKey();
             var decoded = decoder.decode(entry.getValue());
             if (now.isAfter(decoded.payload().exp())) {
-                errors.computeIfAbsent(key, k -> new ArrayList<>()).add("Token expired at: " + decoded.payload().exp());
+                errors.computeIfAbsent(key, k -> new ArrayList<>())
+                        .add("Token expired at: " + decoded.payload().exp());
                 continue;
             }
             if (config.testJwt()) {
                 var encoded = URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8);
                 var uri = config.protectedTestImage() + "?jwt=" + encoded;
-                futures.add(httpClient.request(new RequestOptions().setURI(uri))
+                futures.add(httpClient
+                        .request(new RequestOptions().setURI(uri))
                         .flatMap(HttpClientRequest::send)
                         .onSuccess(response -> {
                             if (response.statusCode() == 404) {
                                 throw new RuntimeException("Protected Test Image not found");
                             } else if (response.statusCode() == 403) {
-                                errors.computeIfAbsent(key, k -> new ArrayList<>()).add("Token is invalid");
+                                errors.computeIfAbsent(key, k -> new ArrayList<>())
+                                        .add("Token is invalid");
                             }
                         })
                         .onFailure(Util.printAndRethrow()));

@@ -6,11 +6,10 @@ import static org.mockito.Mockito.when;
 
 import com.pss.image.proxy.config.ProxyConfig;
 import io.vertx.core.http.HttpServerRequest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.Map;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class QueryParamServiceTest {
 

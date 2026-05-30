@@ -3,7 +3,6 @@ package com.pss.image.proxy.config;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.pss.image.proxy.util.Verify;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +35,9 @@ public record ProxyConfig(
         Verify.isTrue(jwtMappings.containsKey(defaultProfile), "Default profile not found in jwtMappings");
         Verify.isTrue(jwtMappings.keySet().containsAll(acceptedProfiles), "Missing Profiles in jwtMappings");
         if (shimMappings != null) {
-            Verify.isTrue(acceptedProfiles.containsAll(shimMappings.values()), "shimMappings contains a non-accepted profile");
+            Verify.isTrue(
+                    acceptedProfiles.containsAll(shimMappings.values()),
+                    "shimMappings contains a non-accepted profile");
         }
     }
 }

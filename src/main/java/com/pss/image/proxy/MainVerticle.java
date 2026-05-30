@@ -42,7 +42,8 @@ public final class MainVerticle extends VerticleBase {
                 ? wiring.jwtTokenChecker().checkTokens(cfg.proxy().jwtMappings())
                 : Future.succeededFuture();
 
-        HttpServerOptions serverOptions = new HttpServerOptions(new JsonObject(cfg.vertx().server()));
+        HttpServerOptions serverOptions =
+                new HttpServerOptions(new JsonObject(cfg.vertx().server()));
 
         return jwtCheck.compose(v -> vertx.createHttpServer(serverOptions)
                 .requestHandler(wiring.router())

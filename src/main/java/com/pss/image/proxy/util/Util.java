@@ -5,7 +5,6 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.RequestOptions;
-
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +16,8 @@ import java.util.regex.Pattern;
 
 public final class Util {
 
-    private static final Pattern IMAGE_EXTENSIONS = Pattern.compile("\\.(png|jpe?g|svgz?|avif|gif|webp|heif|heic|ico|jp2|j2k|jpf|jpx|jpm|mj2)$");
+    private static final Pattern IMAGE_EXTENSIONS =
+            Pattern.compile("\\.(png|jpe?g|svgz?|avif|gif|webp|heif|heic|ico|jp2|j2k|jpf|jpx|jpm|mj2)$");
 
     public static final String ACCEPT = "Accept";
     public static final String ACCEPT_ENCODING = "Accept-Encoding";
@@ -29,7 +29,8 @@ public final class Util {
 
     static {
         try {
-            var bytes = Util.class.getClassLoader().getResourceAsStream("dot.png").readAllBytes();
+            var bytes =
+                    Util.class.getClassLoader().getResourceAsStream("dot.png").readAllBytes();
             png = Buffer.buffer(bytes);
         } catch (Exception e) {
             throw new IllegalStateException(e);
@@ -39,7 +40,9 @@ public final class Util {
     private Util() {}
 
     public static boolean isImage(String value) {
-        return value != null && !value.isEmpty() && IMAGE_EXTENSIONS.matcher(value).find();
+        return value != null
+                && !value.isEmpty()
+                && IMAGE_EXTENSIONS.matcher(value).find();
     }
 
     public static Handler<Throwable> printAndRethrow() {
@@ -84,8 +87,8 @@ public final class Util {
                         result.append("&");
                     }
                     result.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8))
-                          .append("=")
-                          .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                            .append("=")
+                            .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
                 }
             }
         }
@@ -99,8 +102,8 @@ public final class Util {
                     result.append("&");
                 }
                 result.append(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8))
-                      .append("=")
-                      .append(URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8));
+                        .append("=")
+                        .append(URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8));
             }
         }
 
@@ -126,8 +129,8 @@ public final class Util {
                         result.append("&");
                     }
                     result.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8))
-                          .append("=")
-                          .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
+                            .append("=")
+                            .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
                 }
             }
         }
@@ -138,8 +141,8 @@ public final class Util {
             result.append("&");
         }
         result.append(URLEncoder.encode("profile", StandardCharsets.UTF_8))
-              .append("=")
-              .append(URLEncoder.encode(profile, StandardCharsets.UTF_8));
+                .append("=")
+                .append(URLEncoder.encode(profile, StandardCharsets.UTF_8));
 
         return result.toString();
     }

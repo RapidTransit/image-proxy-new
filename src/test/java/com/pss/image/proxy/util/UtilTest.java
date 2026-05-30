@@ -10,40 +10,40 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class UtilTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "https://www.abc.com/image.png",
-            "/image.png",
-            "image.png",
-            "https://www.abc.com/image.jpg",
-            "/../paths/another/image.jpeg",
-    })
-    public void testValidImageExtensions(String value){
+    @ValueSource(
+            strings = {
+                "https://www.abc.com/image.png",
+                "/image.png",
+                "image.png",
+                "https://www.abc.com/image.jpg",
+                "/../paths/another/image.jpeg",
+            })
+    public void testValidImageExtensions(String value) {
         assertThat(Util.isImage(value)).isTrue();
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "/",
-            "",
-            "image.jpng",
-            "image.jpeeg",
-            "https://www.abc.com/image.sql",
-            "/../paths/another/image.he",
-    })
-    public void testInvalidImageExtensions(String value){
+    @ValueSource(
+            strings = {
+                "/",
+                "",
+                "image.jpng",
+                "image.jpeeg",
+                "https://www.abc.com/image.sql",
+                "/../paths/another/image.he",
+            })
+    public void testInvalidImageExtensions(String value) {
         assertThat(Util.isImage(value)).isFalse();
     }
 
     @Test
-    public void testNullImageExtensions(){
+    public void testNullImageExtensions() {
         assertThat(Util.isImage(null)).isFalse();
     }
 
     @Test
     public void testBuildUriWithQueryParamFiltering() {
-        var multiMap = MultiMap.caseInsensitiveMultiMap()
-                .add("a", "1")
-                .add("v", "drop");
+        var multiMap = MultiMap.caseInsensitiveMultiMap().add("a", "1").add("v", "drop");
         var result = Util.buildUri("/p/foo.jpg", multiMap);
         assertThat(result).contains("a=1");
         assertThat(result).doesNotContain("v=drop");
