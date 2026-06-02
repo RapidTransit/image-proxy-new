@@ -19,7 +19,10 @@ public class ProxyConfigTest {
                 Map.of(),
                 Map.of(),
                 false,
-                5000);
+                5000,
+                1000,
+                2000,
+                900);
     }
 
     @Test
@@ -42,7 +45,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("defaultProfile is empty");
     }
 
@@ -58,7 +64,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("defaultProfile is empty");
     }
 
@@ -74,7 +83,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("acceptedProfiles is empty");
     }
 
@@ -90,7 +102,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("jwtMappings is empty");
     }
 
@@ -106,7 +121,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("queryParam is empty");
     }
 
@@ -122,7 +140,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("noImage is empty");
     }
 
@@ -138,7 +159,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("protectedTestImage is empty");
     }
 
@@ -154,7 +178,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("Default profile not found in jwtMappings");
     }
 
@@ -170,7 +197,10 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("Missing Profiles in jwtMappings");
     }
 
@@ -186,7 +216,86 @@ public class ProxyConfigTest {
                         Map.of(),
                         Map.of("source", "non-existent"),
                         false,
-                        5000))
+                        5000,
+                        1000,
+                        2000,
+                        900))
                 .hasMessage("shimMappings contains a non-accepted profile");
+    }
+
+    @Test
+    public void testNonPositiveMaxEntries() {
+        assertThatThrownBy(() -> new ProxyConfig(
+                        Set.of("p1"),
+                        "p1",
+                        "profile",
+                        "/images/no-image.png",
+                        "/shared/test.png",
+                        Map.of("p1", "token1"),
+                        Map.of(),
+                        Map.of(),
+                        false,
+                        5000,
+                        0,
+                        2000,
+                        900))
+                .hasMessage("maxEntries must be greater than 0");
+    }
+
+    @Test
+    public void testHardMaxEntriesBelowMaxEntries() {
+        assertThatThrownBy(() -> new ProxyConfig(
+                        Set.of("p1"),
+                        "p1",
+                        "profile",
+                        "/images/no-image.png",
+                        "/shared/test.png",
+                        Map.of("p1", "token1"),
+                        Map.of(),
+                        Map.of(),
+                        false,
+                        5000,
+                        1000,
+                        999,
+                        900))
+                .hasMessage("hardMaxEntries must be >= maxEntries");
+    }
+
+    @Test
+    public void testHardMaxEntriesEqualToMaxEntriesAllowed() {
+        var cfg = new ProxyConfig(
+                Set.of("p1"),
+                "p1",
+                "profile",
+                "/images/no-image.png",
+                "/shared/test.png",
+                Map.of("p1", "token1"),
+                Map.of(),
+                Map.of(),
+                false,
+                5000,
+                1000,
+                1000,
+                900);
+        assertThat(cfg.hardMaxEntries()).isEqualTo(cfg.maxEntries());
+    }
+
+    @Test
+    public void testNonPositiveSweepInterval() {
+        assertThatThrownBy(() -> new ProxyConfig(
+                        Set.of("p1"),
+                        "p1",
+                        "profile",
+                        "/images/no-image.png",
+                        "/shared/test.png",
+                        Map.of("p1", "token1"),
+                        Map.of(),
+                        Map.of(),
+                        false,
+                        5000,
+                        1000,
+                        2000,
+                        0))
+                .hasMessage("sweepIntervalSeconds must be greater than 0");
     }
 }

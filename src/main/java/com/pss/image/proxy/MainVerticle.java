@@ -1,6 +1,5 @@
 package com.pss.image.proxy;
 
-
 import com.pss.image.proxy.config.AppConfig;
 import io.vertx.core.Future;
 import io.vertx.core.VerticleBase;
@@ -22,9 +21,6 @@ public final class MainVerticle extends VerticleBase {
 
     private static final Logger log = LoggerFactory.getLogger(MainVerticle.class);
 
-    /// Soft TTL sweep cadence for [com.pss.image.proxy.service.MultiTryService].
-    private static final long SWEEP_INTERVAL_MS = 15 * 60 * 1000L;
-
     private final AppConfig cfg;
     private final ObjectMapper mapper;
 
@@ -37,7 +33,8 @@ public final class MainVerticle extends VerticleBase {
     public Future<?> start() {
         Wiring wiring = new Wiring(vertx, mapper, cfg);
 
-        vertx.setPeriodic(SWEEP_INTERVAL_MS, id -> wiring.multiTryService().sweep());
+        long sweepIntervalMs = cfg.proxy().sweepIntervalSeconds() * 1000L;
+        vertx.setPeriodic(sweepIntervalMs, id -> wiring.multiTryService().sweep());
 
         Future<Void> jwtCheck = cfg.proxy().testJwt()
                 ? wiring.jwtTokenChecker().checkTokens(cfg.proxy().jwtMappings())

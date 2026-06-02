@@ -1,6 +1,9 @@
 {
   "proxy": {
     "multi-try-delay": 10,
+    "max-entries": 10000,
+    "hard-max-entries": 12000,
+    "sweep-interval-seconds": 900,
     "default-profile": "p",
     "query-param": "tr",
     "no-image": "/images/no-image.png",

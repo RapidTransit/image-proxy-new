@@ -1,12 +1,10 @@
 package com.pss.image.proxy.config;
 
-
 import com.pss.image.proxy.util.Verify;
-import tools.jackson.databind.PropertyNamingStrategies;
-import tools.jackson.databind.annotation.JsonNaming;
-
 import java.util.Map;
 import java.util.Set;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
 /// Static proxy configuration loaded once at startup.
 ///
@@ -25,7 +23,10 @@ public record ProxyConfig(
         Map<String, String> secureMappings,
         Map<String, String> shimMappings,
         boolean testJwt,
-        int multiTryDelay) {
+        int multiTryDelay,
+        int maxEntries,
+        int hardMaxEntries,
+        int sweepIntervalSeconds) {
 
     public ProxyConfig {
         Verify.isFalse(defaultProfile == null || defaultProfile.isEmpty(), "defaultProfile is empty");
@@ -41,5 +42,8 @@ public record ProxyConfig(
                     acceptedProfiles.containsAll(shimMappings.values()),
                     "shimMappings contains a non-accepted profile");
         }
+        Verify.isTrue(maxEntries > 0, "maxEntries must be greater than 0");
+        Verify.isTrue(hardMaxEntries >= maxEntries, "hardMaxEntries must be >= maxEntries");
+        Verify.isTrue(sweepIntervalSeconds > 0, "sweepIntervalSeconds must be greater than 0");
     }
 }

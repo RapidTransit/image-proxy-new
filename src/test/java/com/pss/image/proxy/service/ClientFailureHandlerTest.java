@@ -24,7 +24,7 @@ class ClientFailureHandlerTest {
     @BeforeEach
     void setUp() {
         var clock = new MutableClock(Instant.parse("2026-01-01T00:00:00Z"));
-        multiTry = new MultiTryService(new ConcurrentHashMap<>(), clock, 10);
+        multiTry = new MultiTryService(new ConcurrentHashMap<>(), clock, 10, 1000, 2000);
         handler = new ClientFailureHandler(multiTry);
     }
 

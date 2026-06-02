@@ -24,12 +24,11 @@ import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
-import tools.jackson.databind.ObjectMapper;
-
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import tools.jackson.databind.ObjectMapper;
 
 /// Bootstraps the singleton object graph and returns a configured [Router].
 ///
@@ -59,7 +58,8 @@ public final class Wiring {
         Map<String, MultiTryService.CounterValue> retryCache = new ConcurrentHashMap<>();
 
         QueryParamService query = new QueryParamService(proxy);
-        this.multiTryService = new MultiTryService(retryCache, clock, proxy.multiTryDelay());
+        this.multiTryService = new MultiTryService(
+                retryCache, clock, proxy.multiTryDelay(), proxy.maxEntries(), proxy.hardMaxEntries());
         ClientFailureHandler failure = new ClientFailureHandler(multiTryService);
 
         URI noImageUri = URI.create(cfg.client().host()).resolve(proxy.noImage());

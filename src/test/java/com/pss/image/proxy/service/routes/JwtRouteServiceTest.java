@@ -31,7 +31,10 @@ public class JwtRouteServiceTest {
                 Map.of(),
                 Map.of(),
                 false,
-                10);
+                10,
+                1000,
+                2000,
+                900);
         service = new JwtRouteService(new QueryParamService(cfg), cfg);
     }
 

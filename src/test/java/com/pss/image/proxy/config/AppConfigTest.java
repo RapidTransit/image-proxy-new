@@ -2,7 +2,6 @@ package com.pss.image.proxy.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -23,6 +22,9 @@ class AppConfigTest {
             assertThat(cfg.proxy().queryParam()).isEqualTo("tr");
             assertThat(cfg.proxy().acceptedProfiles()).contains("p", "p-m_m");
             assertThat(cfg.proxy().multiTryDelay()).isPositive();
+            assertThat(cfg.proxy().maxEntries()).isEqualTo(10000);
+            assertThat(cfg.proxy().hardMaxEntries()).isEqualTo(12000);
+            assertThat(cfg.proxy().sweepIntervalSeconds()).isEqualTo(900);
             assertThat(cfg.proxy().jwtMappings()).containsKey("p");
 
             assertThat(cfg.vertx()).isNotNull();

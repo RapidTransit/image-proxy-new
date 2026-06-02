@@ -83,6 +83,9 @@ public class QueryParamServiceTest {
                 Map.of(),
                 Map.of("legacy", "p-m_m"),
                 false,
-                10);
+                10,
+                1000,
+                2000,
+                900);
     }
 }

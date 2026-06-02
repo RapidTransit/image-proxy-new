@@ -31,7 +31,7 @@ public class MultiTryServiceTest {
     void setUp() {
         clock = new MutableClock(Instant.parse("2026-01-01T00:00:00Z"));
         cache = new ConcurrentHashMap<>();
-        service = new MultiTryService(cache, clock, 10);
+        service = new MultiTryService(cache, clock, 10, 1000, 2000);
         response = mock(HttpServerResponse.class);
         when(response.putHeader(anyString(), anyString())).thenReturn(response);
     }
@@ -94,16 +94,16 @@ public class MultiTryServiceTest {
 
     @Test
     void constructorRejectsNonPositiveSeconds() {
-        assertThatThrownBy(() -> new MultiTryService(new ConcurrentHashMap<>(), clock, 0))
+        assertThatThrownBy(() -> new MultiTryService(new ConcurrentHashMap<>(), clock, 0, 1000, 2000))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("greater than 0");
-        assertThatThrownBy(() -> new MultiTryService(new ConcurrentHashMap<>(), clock, -1))
+        assertThatThrownBy(() -> new MultiTryService(new ConcurrentHashMap<>(), clock, -1, 1000, 2000))
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void constructorAcceptsSecondsOfOne() {
-        var s = new MultiTryService(new ConcurrentHashMap<>(), clock, 1);
+        var s = new MultiTryService(new ConcurrentHashMap<>(), clock, 1, 1000, 2000);
         s.setHeaders(response);
         verify(response).putHeader("cache-control", "max-age=1");
     }
@@ -117,5 +117,79 @@ public class MultiTryServiceTest {
         var afterCrossing = cache.get(TEST_URL).time;
         assertThat(afterCrossing).isGreaterThan(initial);
         assertThat(cache.get(TEST_URL).counter).isEqualTo(1);
+    }
+
+    @Test
+    void doesNotAddNewEntryWhenAtHardMaxEntries() {
+        var smallCache = new ConcurrentHashMap<String, MultiTryService.CounterValue>();
+        var bounded = new MultiTryService(smallCache, clock, 10, 1, 2);
+
+        bounded.manipulateResponseCache("/a.png", response);
+        bounded.manipulateResponseCache("/b.png", response);
+        assertThat(smallCache).hasSize(2);
+
+        // At the hard max (2): a brand-new URL must be refused, not tracked.
+        bounded.manipulateResponseCache("/c.png", response);
+
+        assertThat(smallCache).hasSize(2);
+        assertThat(smallCache).doesNotContainKey("/c.png");
+    }
+
+    @Test
+    void updatesExistingEntryEvenWhenAtHardMaxEntries() {
+        var smallCache = new ConcurrentHashMap<String, MultiTryService.CounterValue>();
+        var bounded = new MultiTryService(smallCache, clock, 10, 1, 2);
+
+        bounded.manipulateResponseCache("/a.png", response);
+        bounded.manipulateResponseCache("/b.png", response);
+        assertThat(smallCache).hasSize(2);
+
+        // The guard only blocks new keys — existing keys still get their backoff window touched.
+        clock.advance(Duration.ofSeconds(5));
+        reset(response);
+        when(response.putHeader(anyString(), anyString())).thenReturn(response);
+        bounded.manipulateResponseCache("/a.png", response);
+
+        verify(response).putHeader("cache-control", "max-age=10");
+        assertThat(smallCache).hasSize(2);
+    }
+
+    @Test
+    void sweepTrimsToMaxEntriesWhenOverCapacity() {
+        var c = new ConcurrentHashMap<String, MultiTryService.CounterValue>();
+        var bounded = new MultiTryService(c, clock, 10, 3, 100);
+
+        for (int i = 0; i < 6; i++) {
+            bounded.manipulateResponseCache("/img" + i + ".png", response);
+            clock.advance(Duration.ofSeconds(1));
+        }
+        assertThat(c).hasSize(6);
+
+        bounded.sweep();
+
+        assertThat(c).hasSize(3);
+    }
+
+    @Test
+    void sweepKeepsFreshestEntriesWhenTrimming() {
+        var c = new ConcurrentHashMap<String, MultiTryService.CounterValue>();
+        var bounded = new MultiTryService(c, clock, 10, 2, 100);
+
+        for (int i = 0; i < 5; i++) {
+            bounded.manipulateResponseCache("/img" + i + ".png", response);
+            clock.advance(Duration.ofSeconds(1));
+        }
+
+        bounded.sweep();
+
+        // Oldest backoff windows are evicted first; the two freshest survive.
+        assertThat(c).containsOnlyKeys("/img3.png", "/img4.png");
+    }
+
+    @Test
+    void constructorRejectsHardMaxBelowMaxEntries() {
+        assertThatThrownBy(() -> new MultiTryService(new ConcurrentHashMap<>(), clock, 10, 5, 4))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("hardMaxEntries");
     }
 }

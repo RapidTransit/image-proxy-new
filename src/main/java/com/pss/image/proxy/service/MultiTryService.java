@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpServerResponse;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
@@ -36,13 +37,20 @@ public final class MultiTryService implements CacheHeaderManipulator {
     private final Clock clock;
     private final int seconds;
     private final int millis;
+    private final int maxEntries;
+    private final int hardMaxEntries;
 
-    public MultiTryService(Map<String, CounterValue> cache, Clock clock, int seconds) {
+    public MultiTryService(
+            Map<String, CounterValue> cache, Clock clock, int seconds, int maxEntries, int hardMaxEntries) {
         Verify.isTrue(seconds >= 1, "Passed in seconds must be greater than 0, got: " + seconds);
+        Verify.isTrue(maxEntries >= 1, "maxEntries must be greater than 0, got: " + maxEntries);
+        Verify.isTrue(hardMaxEntries >= maxEntries, "hardMaxEntries must be >= maxEntries, got: " + hardMaxEntries);
         this.cache = cache;
         this.clock = clock;
         this.seconds = seconds;
         this.millis = seconds * 1000;
+        this.maxEntries = maxEntries;
+        this.hardMaxEntries = hardMaxEntries;
     }
 
     @Override
@@ -51,6 +59,13 @@ public final class MultiTryService implements CacheHeaderManipulator {
         long forwardTime = now + millis;
         cache.compute(url, (k, existing) -> {
             if (existing == null) {
+                // Hard ceiling: refuse to start tracking a new URL once full so the
+                // map can't grow without bound under high-cardinality traffic. The
+                // size() read is weakly consistent, so the effective bound is
+                // hardMaxEntries + concurrent inserters — fine for a defensive cap.
+                if (cache.size() >= hardMaxEntries) {
+                    return null;
+                }
                 return new CounterValue(forwardTime);
             }
             if (existing.time < now) {
@@ -78,6 +93,19 @@ public final class MultiTryService implements CacheHeaderManipulator {
     public void sweep() {
         long cutoff = clock.millis() - ENTRY_TTL_MS;
         cache.entrySet().removeIf(e -> e.getValue().time < cutoff);
+
+        // Backstop for the [#manipulateResponseCache] hard guard: if the map is
+        // still above the soft cap after the TTL pass, evict the oldest backoff
+        // windows first until we are back at maxEntries.
+        int over = cache.size() - maxEntries;
+        if (over > 0) {
+            cache.entrySet().stream()
+                    .sorted(Comparator.comparingLong(e -> e.getValue().time))
+                    .limit(over)
+                    .map(Map.Entry::getKey)
+                    .toList()
+                    .forEach(cache::remove);
+        }
     }
 
     public static final class CounterValue {

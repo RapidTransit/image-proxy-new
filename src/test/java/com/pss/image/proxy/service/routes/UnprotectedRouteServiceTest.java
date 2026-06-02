@@ -30,7 +30,10 @@ public class UnprotectedRouteServiceTest {
                 Map.of(),
                 Map.of(),
                 false,
-                10);
+                10,
+                1000,
+                2000,
+                900);
         service = new UnprotectedRouteService(new QueryParamService(cfg));
     }
 

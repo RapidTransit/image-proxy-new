@@ -2,7 +2,6 @@ package com.pss.image.proxy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 import com.pss.image.proxy.config.AppConfig;
 import com.pss.image.proxy.config.ProxyConfig;
 import io.vertx.core.Vertx;
@@ -32,8 +31,7 @@ import tools.jackson.databind.json.JsonMapper;
 @ExtendWith(VertxExtension.class)
 class EndToEndTest {
 
-    private static final ObjectMapper MAPPER =
-            JsonMapper.builder().build();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     private Vertx vertx;
     private HttpServer upstream;
@@ -140,7 +138,10 @@ class EndToEndTest {
                         Map.of(),
                         Map.of(),
                         false,
-                        10),
+                        10,
+                        1000,
+                        2000,
+                        900),
                 new AppConfig.VertxBlock(
                         Map.of("preferNativeTransport", false),
                         Map.of("port", proxyPort, "host", "127.0.0.1"),
