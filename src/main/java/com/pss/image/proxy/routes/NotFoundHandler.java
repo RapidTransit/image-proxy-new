@@ -16,7 +16,6 @@ import io.vertx.ext.web.RoutingContext;
 import java.net.URI;
 import java.time.Clock;
 import java.util.Map;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,11 +58,23 @@ public final class NotFoundHandler extends AbstractHandler {
         this.clock = clock;
     }
 
+    protected String getType(String header) {
+        if (header == null || "".equals(header)) {
+            return "jpeg";
+        } else if (header.contains("image/avif")) {
+            return "avif";
+        } else if (header.contains("image/webp")) {
+            return "webp";
+        }
+        return "jpeg";
+    }
+
     @Override
     protected void handleInternal(
             RoutingContext event, HttpServerRequest request, HttpServerResponse serverResponse, String path) {
         var profile = queryParamService.extractQueryParam(request, path);
-        var handle = Optional.ofNullable(request.getHeader(ACCEPT)).orElse("").contains("image/webp") ? "webp" : "jpeg";
+
+        var handle = getType(request.getHeader(ACCEPT));
 
         var key = profile + ':' + handle;
         var cached = responseCache.get(key);

@@ -4,10 +4,9 @@ import com.pss.image.proxy.data.JwtHeader;
 import com.pss.image.proxy.data.JwtPayload;
 import com.pss.image.proxy.data.JwtToken;
 import com.pss.image.proxy.util.Verify;
-import tools.jackson.databind.ObjectMapper;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import tools.jackson.databind.ObjectMapper;
 
 /// Decodes a JWT compact serialization into a [JwtToken] record.
 ///

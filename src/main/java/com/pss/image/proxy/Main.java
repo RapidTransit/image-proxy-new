@@ -1,6 +1,5 @@
 package com.pss.image.proxy;
 
-
 import com.pss.image.proxy.config.AppConfig;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;

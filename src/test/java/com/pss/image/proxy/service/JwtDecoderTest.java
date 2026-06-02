@@ -2,7 +2,6 @@ package com.pss.image.proxy.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 import com.pss.image.proxy.data.JwtArgs;
 import com.pss.image.proxy.data.JwtPayload;
 import com.pss.image.proxy.data.JwtToken;
