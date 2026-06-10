@@ -3,7 +3,6 @@ plugins {
     application
     jacoco
     alias(libs.plugins.spotless)
-    alias(libs.plugins.beryx.jlink)
     alias(libs.plugins.pitest)
 }
 
@@ -78,42 +77,7 @@ spotless {
     }
 }
 
-jlink {
-    options.set(
-        listOf(
-            "--strip-debug",
-            "--no-header-files",
-            "--no-man-pages",
-            "--compress", "zip-6",
-            "--vm", "server",
-        )
-    )
 
-    launcher {
-        name = "image-proxy"
-        jvmArgs = listOf(
-            "--enable-preview",
-            "--enable-native-access=com.pss.merged.module",
-            "-Djava.awt.headless=true",
-            "-Dfile.encoding=UTF-8",
-        )
-    }
-
-    forceMerge("netty", "logback", "log4j", "slf4j", "jackson")
-
-    mergedModule {
-        requires("java.naming")
-        requires("java.management")
-        requires("java.logging")
-        requires("java.xml")
-        requires("java.sql")
-        requires("jdk.unsupported")
-        uses("org.slf4j.spi.SLF4JServiceProvider")
-        uses("ch.qos.logback.classic.spi.Configurator")
-        provides("org.slf4j.spi.SLF4JServiceProvider")
-                .with("ch.qos.logback.classic.spi.LogbackServiceProvider")
-    }
-}
 
 jacoco {
     toolVersion = "0.8.14"
@@ -147,4 +111,30 @@ pitest {
     jvmArgs.set(listOf("--enable-preview"))
     mainProcessJvmArgs.set(listOf("--enable-preview"))
     failWhenNoMutations.set(false)
+}
+
+val jdkTag: String = "eclipse-temurin:${libs.versions.temurinDockerTagVersion.get()}-jdk"
+
+tasks.register("listDeps") {
+    group = "build"
+    description = "Prints a jdeps report for each runtime dependency"
+
+    val launcher = javaToolchains.launcherFor(java.toolchain)
+    val jdeps = launcher.map { it.metadata.installationPath.file("bin/jdeps").asFile.absolutePath }
+    val release = launcher.map { it.metadata.languageVersion.asInt().toString() }
+    val runtimeJars = configurations.runtimeClasspath.map { it.files }
+
+    doLast {
+        val jars = runtimeJars.get()
+        val classPath = jars.joinToString(File.pathSeparator) { it.absolutePath }
+        jars.forEach { jar ->
+            println("Report for: $jar")
+            val result = providers.exec {
+                isIgnoreExitValue = true
+                commandLine(jdeps.get(), "--multi-release", release.get(), "--class-path", classPath, jar.absolutePath)
+            }
+            result.standardError.asText.orNull?.takeIf(String::isNotBlank)?.let(::println)
+            result.standardOutput.asText.orNull?.let(::println)
+        }
+    }
 }
